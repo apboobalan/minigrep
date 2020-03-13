@@ -23,24 +23,17 @@ fn read_file(file_name: &str) -> Result<String, io::Error> {
 }
 
 pub fn grep_lines<'a>(file_contents: &'a str, query: &str) -> Vec<&'a str> {
-    let mut grepped_lines = Vec::new();
-    for line in file_contents.lines() {
-        if line.contains(query) {
-            grepped_lines.push(line)
-        }
-    }
-    grepped_lines
+    file_contents
+        .lines()
+        .filter(|line| line.contains(query))
+        .collect()
 }
 
 pub fn case_insensitive_grep_lines<'a>(file_contents: &'a str, query: &str) -> Vec<&'a str> {
-    let mut grepped_lines = Vec::new();
-    let query = query.to_lowercase();
-    for line in file_contents.lines() {
-        if line.to_lowercase().contains(&query) {
-            grepped_lines.push(line)
-        }
-    }
-    grepped_lines
+    file_contents
+        .lines()
+        .filter(|line| line.to_lowercase().contains(&query.to_lowercase()))
+        .collect()
 }
 
 fn print_grepped_lines(lines: &Vec<&str>) -> () {
@@ -53,16 +46,14 @@ mod test {
     use super::*;
     #[test]
     fn test_grep_lines() {
-        let file_contents = 
-        "Hello world!\nTrhello user!";
+        let file_contents = "Hello world!\nTrhello user!";
         let query = "hello";
         assert_eq!(vec!["Trhello user!"], grep_lines(&file_contents, &query));
     }
 
     #[test]
     fn test_case_insensitive_grep() {
-        let file_contents = 
-        "Hello world!\nTrhello user!";
+        let file_contents = "Hello world!\nTrhello user!";
         let query = "hello";
         assert_eq!(
             vec!["Hello world!", "Trhello user!"],
